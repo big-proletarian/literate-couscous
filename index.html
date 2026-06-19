@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Triangular LeftValues — a comprehensive political quiz mapping your position across 8 axes of left-wing thought using ternary plots.">
+  <title>Triangular LeftValues</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="hero">
+      <h1 class="hero-title">Triangular LeftValues</h1>
+      <p class="hero-subtitle">A comprehensive political quiz mapping your position across 8 axes of left-wing thought using ternary plots</p>
+      <a href="instructions.html" class="start-btn" id="start-btn">Take the Quiz ✊</a>
+    </section>
+
+    <!-- ===== THE 8 AXES ===== -->
+    <section class="axes-section" id="axes-section">
+      <h2>The 8 Axes</h2>
+      <div class="axes-grid-landing">
+
+        <!-- A1 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a1-color);">
+          <h3 style="color: var(--a1-color);">A1 — Strategy &amp; Transition</h3>
+          <p>How should the transition to socialism be achieved? Through revolutionary overthrow, gradual electoral reform, or building counter-power through mutual aid and dual power?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">✊ Revolution</span>
+            <span class="vertex-label">🗳️ Reform</span>
+            <span class="vertex-label">🤝 Counter-Power</span>
+          </div>
+        </div>
+
+        <!-- A2 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a2-color);">
+          <h3 style="color: var(--a2-color);">A2 — Methodology &amp; Framework</h3>
+          <p>What analytical framework guides your politics? Marxist dialectical materialism, idealist voluntarism driven by will and ideas, or a pragmatic case-by-case approach?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">🔬 Materialist</span>
+            <span class="vertex-label">🌹 Voluntarist</span>
+            <span class="vertex-label">⚙️ Pragmatic</span>
+          </div>
+        </div>
+
+        <!-- A3 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a3-color);">
+          <h3 style="color: var(--a3-color);">A3 — Governance &amp; Administration</h3>
+          <p>How should a socialist society be governed? Through state bureaucracy, democratic centralism, or decentralised horizontal structures?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">🏛️ Bureaucratic</span>
+            <span class="vertex-label">🔗 Centralised</span>
+            <span class="vertex-label">Ⓐ Decentralised</span>
+          </div>
+        </div>
+
+        <!-- A4 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a4-color);">
+          <h3 style="color: var(--a4-color);">A4 — Scale of Organization</h3>
+          <p>At what scale should socialism be organized? Global international movement, national self-determination, or local community-based structures?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">🌐 Internationalist</span>
+            <span class="vertex-label">🚩 Nationalist</span>
+            <span class="vertex-label">🌱 Localist</span>
+          </div>
+        </div>
+
+        <!-- A5 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a5-color);">
+          <h3 style="color: var(--a5-color);">A5 — Vehicle of Struggle</h3>
+          <p>What organizational form should drive the socialist movement? A vanguard party, trade unions, or workers' councils and communes?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">📋 Party</span>
+            <span class="vertex-label">🔧 Union</span>
+            <span class="vertex-label">📢 Council/Commune</span>
+          </div>
+        </div>
+
+        <!-- A6 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a6-color);">
+          <h3 style="color: var(--a6-color);">A6 — Ecology &amp; Resource Allocation</h3>
+          <p>How should a socialist society relate to production and nature? Prioritize industrial output, ecological preservation, or transcending the work paradigm entirely?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">🏭 Production</span>
+            <span class="vertex-label">🌿 Nature</span>
+            <span class="vertex-label">✨ Post-Work</span>
+          </div>
+        </div>
+
+        <!-- A7 (Linear) -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a7-color);">
+          <h3 style="color: var(--a7-color);">A7 — Culture &amp; Society <span style="font-size:0.75rem; opacity:0.7;">[LINEAR]</span></h3>
+          <p>Where do you fall on social and cultural issues? This is the only linear axis, measuring progressive vs reactionary positions.</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">➡️ Progressive</span>
+            <span class="vertex-label">🛡️ Reactionary</span>
+          </div>
+        </div>
+
+        <!-- A8 -->
+        <div class="axis-desc-card glass-card" style="border-left-color: var(--a8-color);">
+          <h3 style="color: var(--a8-color);">A8 — Class Character &amp; Alignment</h3>
+          <p>What is the class character of your political alignment? Strictly proletarian, oriented toward small producers, or favoring multi-class alliances?</p>
+          <div class="vertex-labels">
+            <span class="vertex-label">✊ Proletarian</span>
+            <span class="vertex-label">🪙 Petty Bourgeois</span>
+            <span class="vertex-label">⚖️ Class-Collaborationist</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== INFO: What is this quiz? ===== -->
+    <section class="info-section" style="margin-top: 2rem;">
+      <div class="glass-card">
+        <h2>What is Triangular LeftValues?</h2>
+        <p>Triangular LeftValues is a leftist political quiz inspired by the original LeftValues and 8values projects. Unlike traditional binary-axis quizzes, each category here uses a ternary plot — an equilateral triangle — where three positions compete simultaneously. Your answers place you within each triangle, giving a much richer picture of your political alignment.</p>
+        <p style="margin-top: 1rem;">There are <strong>89 questions</strong> across 8 axes. Answer honestly!</p>
+      </div>
+    </section>
+
+    <!-- ===== INFO: Closest Match ===== -->
+    <section class="info-section" style="margin-top: 1.5rem;">
+      <div class="glass-card">
+        <h2>What does 'Closest Match' mean?</h2>
+        <p>At the end of the quiz, your scores are compared against 26 political ideologies using Euclidean distance. The ideology whose ideal profile is nearest to yours is shown as your closest match, along with 4 runner-up matches.</p>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <p>Triangular LeftValues is open source and licensed under the <a href="https://github.com/LeftValues/leftvalues.github.io">MIT License</a>.</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

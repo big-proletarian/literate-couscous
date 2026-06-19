@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangular LeftValues Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href='style.css' rel='stylesheet' type='text/css'>
+    <link rel="icon" type="image/png" href="icon.png">
+</head>
+<body>
+    <div class="results-container">
+        <div class="results-header">
+            <h1>Your Closest Match</h1>
+            <div class="ideology-badge" id="main-match-name">Loading...</div>
+            <div class="ideology-desc" id="main-match-desc"></div>
+        </div>
+
+        <div class="axes-grid" id="axes-grid">
+            <!-- Triangles and linear bar will be inserted here -->
+        </div>
+
+        <div class="match-section">
+            <h2>Next Closest Matches</h2>
+            <div class="match-grid" id="next-matches-grid">
+                <!-- Matches will be inserted here -->
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <button class="save-btn" onclick="saveImage()">Save Results Image</button>
+            <br><br>
+            <canvas id="results-canvas" width="800" height="1200" style="display:none;"></canvas>
+            <img id="results-img" src="" alt="Results Image" style="max-width:100%; border:2px solid var(--border); border-radius:12px; display:none;">
+        </div>
+    </div>
+
+    <script src="ideologies.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        function getParam(name, def) {
+            let val = urlParams.get(name);
+            return val ? parseFloat(val) : def;
+        }
+
+        const user = {
+            a1: [getParam('a1a', 33.3), getParam('a1b', 33.3), getParam('a1c', 33.3)],
+            a2: [getParam('a2a', 33.3), getParam('a2b', 33.3), getParam('a2c', 33.3)],
+            a3: [getParam('a3a', 33.3), getParam('a3b', 33.3), getParam('a3c', 33.3)],
+            a4: [getParam('a4a', 33.3), getParam('a4b', 33.3), getParam('a4c', 33.3)],
+            a5: [getParam('a5a', 33.3), getParam('a5b', 33.3), getParam('a5c', 33.3)],
+            a6: [getParam('a6a', 33.3), getParam('a6b', 33.3), getParam('a6c', 33.3)],
+            a7: getParam('a7', 50),
+            a8: [getParam('a8a', 33.3), getParam('a8b', 33.3), getParam('a8c', 33.3)]
+        };
+
+        let matches = [];
+        for (let name in ideologies) {
+            let ideo = ideologies[name];
+            let dist = 0;
+            ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a8'].forEach(ax => {
+                dist += Math.pow(user[ax][0] - ideo[ax][0], 2);
+                dist += Math.pow(user[ax][1] - ideo[ax][1], 2);
+                dist += Math.pow(user[ax][2] - ideo[ax][2], 2);
+            });
+            dist += Math.pow(user.a7 - ideo.a7, 2);
+            matches.push({name: name, dist: dist, desc: ideo.desc});
+        }
+
+        matches.sort((a, b) => a.dist - b.dist);
+
+        let closestDist = matches[0].dist;
+        let farthestDist = matches[matches.length - 1].dist;
+
+        matches.forEach(m => {
+            if (farthestDist === closestDist) m.matchPct = 100;
+            else m.matchPct = (1 - (m.dist - closestDist) / (farthestDist - closestDist)) * 100;
+        });
+
+        document.getElementById('main-match-name').innerText = matches[0].name;
+        document.getElementById('main-match-desc').innerText = matches[0].desc;
+
+        let nextMatchesHtml = '';
+        for (let i = 1; i <= 4 && i < matches.length; i++) {
+            nextMatchesHtml += `
+                <div class="glass-card match-card">
+                    <div class="match-name">${matches[i].name}</div>
+                    <div class="match-score">${matches[i].matchPct.toFixed(1)}% Match</div>
+                    <div class="match-desc">${matches[i].desc}</div>
+                </div>
+            `;
+        }
+        document.getElementById('next-matches-grid').innerHTML = nextMatchesHtml;
+
+        const axesMeta = {
+            a1: { name: 'A1: Strategy & Transition', color: 'var(--a1-color)', hex: '#f85149', labels: ['✊ Revolution', '🗳️ Reform', '🤝 Counter-Power'] },
+            a2: { name: 'A2: Methodology & Framework', color: 'var(--a2-color)', hex: '#da6886', labels: ['🔬 Materialist', '🌹 Voluntarist', '⚙️ Pragmatic'] },
+            a3: { name: 'A3: Governance & Administration', color: 'var(--a3-color)', hex: '#d29922', labels: ['🏛️ Bureaucratic', '🔗 Centralised', 'Ⓐ Decentralised'] },
+            a4: { name: 'A4: Scale of Organization', color: 'var(--a4-color)', hex: '#a371f7', labels: ['🌐 Internationalist', '🚩 Nationalist', '🌱 Localist'] },
+            a5: { name: 'A5: Vehicle of Struggle', color: 'var(--a5-color)', hex: '#e09b50', labels: ['📋 Party', '🔧 Union', '📢 Council/Commune'] },
+            a6: { name: 'A6: Ecology & Resource Allocation', color: 'var(--a6-color)', hex: '#3fb950', labels: ['🏭 Production', '🌿 Nature', '✨ Post-Work'] },
+            a8: { name: 'A8: Class Character & Alignment', color: 'var(--a8-color)', hex: '#f0883e', labels: ['✊ Proletarian', '🪙 Petty Bourgeois', '⚖️ Class-Collaborationist'] }
+        };
+
+        let axesHtml = '';
+        ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'].forEach(ax => {
+            axesHtml += renderTriangleCard(ax, axesMeta[ax], user[ax]);
+        });
+        axesHtml += renderLinearCard('a7', { name: 'A7: Culture & Society', color: 'var(--a7-color)', hex: '#58a6ff', poles: ['➡️ Progressive', '🛡️ Reactionary'] }, user.a7);
+        axesHtml += renderTriangleCard('a8', axesMeta['a8'], user['a8']);
+
+        document.getElementById('axes-grid').innerHTML = axesHtml;
+
+        function renderTriangleCard(ax, meta, scores) {
+            let [wA, wB, wC] = scores;
+            let Ax = 150, Ay = 20;
+            let Bx = 20, By = 260;
+            let Cx = 280, Cy = 260;
+            
+            let px = (wA/100)*Ax + (wB/100)*Bx + (wC/100)*Cx;
+            let py = (wA/100)*Ay + (wB/100)*By + (wC/100)*Cy;
+
+            return `
+                <div class="glass-card axis-card" data-axis="${ax}">
+                    <div class="axis-title">${meta.name}</div>
+                    <div class="triangle-container">
+                        <svg viewBox="0 0 300 300" width="100%" height="auto">
+                            <polygon points="${Ax},${Ay} ${Bx},${By} ${Cx},${Cy}" fill="${meta.color}" fill-opacity="0.1" stroke="${meta.color}" stroke-width="2"/>
+                            
+                            <line x1="${Bx + (Ax-Bx)*0.25}" y1="${By + (Ay-By)*0.25}" x2="${Cx + (Ax-Cx)*0.25}" y2="${Cy + (Ay-Cy)*0.25}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Bx + (Ax-Bx)*0.5}" y1="${By + (Ay-By)*0.5}" x2="${Cx + (Ax-Cx)*0.5}" y2="${Cy + (Ay-Cy)*0.5}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Bx + (Ax-Bx)*0.75}" y1="${By + (Ay-By)*0.75}" x2="${Cx + (Ax-Cx)*0.75}" y2="${Cy + (Ay-Cy)*0.75}" stroke="var(--border)" stroke-width="1"/>
+                            
+                            <line x1="${Ax + (Bx-Ax)*0.25}" y1="${Ay + (By-Ay)*0.25}" x2="${Cx + (Bx-Cx)*0.25}" y2="${Cy + (By-Cy)*0.25}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Ax + (Bx-Ax)*0.5}" y1="${Ay + (By-Ay)*0.5}" x2="${Cx + (Bx-Cx)*0.5}" y2="${Cy + (By-Cy)*0.5}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Ax + (Bx-Ax)*0.75}" y1="${Ay + (By-Ay)*0.75}" x2="${Cx + (Bx-Cx)*0.75}" y2="${Cy + (By-Cy)*0.75}" stroke="var(--border)" stroke-width="1"/>
+
+                            <line x1="${Ax + (Cx-Ax)*0.25}" y1="${Ay + (Cy-Ay)*0.25}" x2="${Bx + (Cx-Bx)*0.25}" y2="${By + (Cy-By)*0.25}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Ax + (Cx-Ax)*0.5}" y1="${Ay + (Cy-Ay)*0.5}" x2="${Bx + (Cx-Bx)*0.5}" y2="${By + (Cy-By)*0.5}" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="${Ax + (Cx-Ax)*0.75}" y1="${Ay + (Cy-Ay)*0.75}" x2="${Bx + (Cx-Bx)*0.75}" y2="${By + (Cy-By)*0.75}" stroke="var(--border)" stroke-width="1"/>
+
+                            <text x="150" y="12" fill="var(--text-primary)" font-size="12" text-anchor="middle">${meta.labels[0]} ${wA.toFixed(1)}%</text>
+                            <text x="15" y="275" fill="var(--text-primary)" font-size="12" text-anchor="start">${meta.labels[1]} ${wB.toFixed(1)}%</text>
+                            <text x="285" y="275" fill="var(--text-primary)" font-size="12" text-anchor="end">${meta.labels[2]} ${wC.toFixed(1)}%</text>
+
+                            <circle cx="${px}" cy="${py}" r="6" fill="${meta.color}" class="user-dot" />
+                        </svg>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLinearCard(ax, meta, score) {
+            return `
+                <div class="glass-card axis-card" data-axis="${ax}">
+                    <div class="axis-title">${meta.name}</div>
+                    <div class="linear-bar-container">
+                        <div class="linear-bar-labels">
+                            <span>${meta.poles[0]}</span>
+                            <span>${meta.poles[1]}</span>
+                        </div>
+                        <div class="linear-bar">
+                            <div class="linear-fill" style="width: ${score}%; background: ${meta.color};">
+                                ${score.toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveImage() {
+            const canvas = document.getElementById('results-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#0d1117';
+            ctx.fillRect(0, 0, 800, 1200);
+
+            ctx.fillStyle = '#e6edf3';
+            ctx.font = 'bold 36px Montserrat';
+            ctx.textAlign = 'center';
+            ctx.fillText('Triangular LeftValues', 400, 60);
+
+            ctx.font = 'bold 48px Montserrat';
+            ctx.fillStyle = '#f85149';
+            ctx.fillText(matches[0].name, 400, 130);
+            
+            ctx.font = '24px Inter';
+            ctx.fillStyle = '#8b949e';
+            ctx.fillText(window.location.hostname || 'leftvalues.github.io', 400, 1150);
+
+            let dataUrl = canvas.toDataURL("image/png");
+            let img = document.getElementById('results-img');
+            img.src = dataUrl;
+            img.style.display = 'inline-block';
+            
+            let a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'TriangularLeftValues.png';
+            a.click();
+        }
+    </script>
+</body>
+</html>
