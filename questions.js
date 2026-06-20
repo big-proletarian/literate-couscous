@@ -96,3 +96,41 @@ Object.size = function(obj) {
     for (key in obj) { if (obj.hasOwnProperty(key)) size++; }
     return size;
 };
+
+// # a1 Strategy & Transition
+// a1a Revolution
+// a1b Reform
+// a1c Counter-Power
+
+// # a2 Methodology & Framework
+// a2a Materialist
+// a2b Voluntarist
+// a2c Pragmatic
+
+// # a3 Governance & Administration
+// a3a Bureaucratic
+// a3b Centralised
+// a3c Decentralised
+
+// # a4 Scale of Organization
+// a4a Internationalist
+// a4b Nationalist
+// a4c Localist
+
+// # a5 Vehicle of Struggle
+// a5a Party
+// a5b Union
+// a5c Council/Commune
+
+// # a6 Ecology & Resource Allocation
+// a6a Productivist
+// a6b Ecological
+// a6c Post-Work
+
+// # a7 Culture & Society
+// a7 Reactionary-Progressive
+
+// # a8 Class Character & Alignment
+// a8a Proletarian
+// a8b Petit-Bourgeois
+// a8c Class-Collaborationist
