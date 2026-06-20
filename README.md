@@ -1,23 +1,74 @@
-# leftvalues.github.io
+# Triangular LeftValues
 
-The LeftValues Quiz measures and analyzes various aspects of left-wing political, social and economic viewpoints over the course of 72 questions, with seven axes of values. LeftValues is based upon [8values](https://8values.github.io/).
+## Running the Quiz
+Clone the repo and open `index.html`
 
-### Contributions
+The quiz calculates your political profile and finds the closest matching ideologies.
 
-Translations were previously handled through the WebLate app, but since 2023 the provider of this application has been unavailable. This project is no longer actively maintained, but corrections to translations and new translations can still be submitted as pull requests by editing the .json files in the lang directory.
+## Requirements (for analysis tools)
 
-Unfinished translations include:
-* Arabic
-* Asturian
-* Esperanto
-* Burmese
-* Turkish
-* Thai
+```bash
+pip install -r requirements.txt
+```
 
-If you have knowledge in these languages please consider contributing. Other languages are also welcome. If you submit a pull request please keep in mind that it may take some time before it is approved.
+## Analysis Tools
 
-New questions and axes are not being considered, but feel free to create your own forks that expand upon and modify LeftValues.
+All available ideologies can be found in `ideologies.js`
 
-### License
+### Nearest Ideologies
 
-LeftValues, like 8values, is licensed under the [MIT License](https://github.com/LeftValues/leftvalues.github.io/blob/master/LICENSE).
+```bash
+python analysis.py nearest "National Bolshevism"
+```
+
+Shows the ideologies closest to a given ideology in ideological space.
+
+### Generate Answer Keys
+
+```bash
+python analysis.py optimise "Marxism-Leninism"
+```
+
+Generates answer sets that most closely produce the target ideology.
+
+### Attainability Analysis
+
+```bash
+python analysis.py attainability
+```
+
+Determines how closely each ideology can be reached through actual quiz responses.
+
+## Visualisation
+
+### Ideology Space
+
+```bash
+python mds.py ideology-space
+```
+
+Produces:
+
+```text
+ideology_space.svg
+```
+
+![Ideology Space](ideology_space.svg)
+
+### Answer Space
+
+```bash
+python mds.py answer-space
+```
+
+Produces:
+
+```text
+answer_space.svg
+```
+
+![Answer Space](answer_space.svg)
+
+## Methodology
+
+Ideologies are represented as vectors in a high-dimensional space. Euclidean distances between ideologies are used for matching and visualisation. Multidimensional Scaling (MDS) projects those distances into two dimensions to create ideology maps while preserving relative ideological similarity.

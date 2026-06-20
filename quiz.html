@@ -1,145 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Triangular LeftValues Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link href='style.css' rel='stylesheet' type='text/css'>
-    <link rel="icon" type="image/png" href="icon.png">
-</head>
-<body>
-    <div class="quiz-container">
-        <div class="progress-text" id="progress-text">Question 1 of 89</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
-        </div>
-        
-        <div class="glass-card question-card fade-in" id="question-card">
-            <div class="question-text" id="question-text">Loading...</div>
-        </div>
 
-        <div class="answer-buttons fade-in" id="answer-buttons">
-            <button class="answer-btn strongly-agree" onclick="answer(1.0)">Strongly Agree</button>
-            <button class="answer-btn agree" onclick="answer(0.5)">Agree</button>
-            <button class="answer-btn neutral" onclick="answer(0.0)">Neutral/Unsure</button>
-            <button class="answer-btn disagree" onclick="answer(-0.5)">Disagree</button>
-            <button class="answer-btn strongly-disagree" onclick="answer(-1.0)">Strongly Disagree</button>
-            <button class="back-btn" id="back-btn" onclick="goBack()" disabled>← Back</button>
-        </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triangular LeftValues Quiz</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href='style.css' rel='stylesheet' type='text/css'>
+  <link rel="icon" type="image/png" href="icon.png">
+</head>
+
+<body>
+  <div class="quiz-container">
+    <div class="progress-text" id="progress-text">Question 1 of 89</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
     </div>
 
-    <script src="questions.js"></script>
-    <script>
-        let currentQuestion = 0;
-        let scores = {
-            a1a: 0, a1b: 0, a1c: 0,
-            a2a: 0, a2b: 0, a2c: 0,
-            a3a: 0, a3b: 0, a3c: 0,
-            a4a: 0, a4b: 0, a4c: 0,
-            a5a: 0, a5b: 0, a5c: 0,
-            a6a: 0, a6b: 0, a6c: 0,
-            a7: 0,
-            a8a: 0, a8b: 0, a8c: 0
-        };
-        let maxScores = Object.assign({}, scores);
-        let historyStack = [];
+    <div class="glass-card question-card fade-in" id="question-card">
+      <div class="question-text" id="question-text">Loading...</div>
+      <p id="debug-info"></p>
+    </div>
 
-        // Fisher-Yates shuffle
-        for (let i = questions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [questions[i], questions[j]] = [questions[j], questions[i]];
+    <div class="answer-buttons fade-in" id="answer-buttons">
+      <button class="answer-btn strongly-agree" onclick="answer(1.0)">Strongly Agree</button>
+      <button class="answer-btn agree" onclick="answer(0.5)">Agree</button>
+      <button class="answer-btn neutral" onclick="answer(0.0)">Neutral/Unsure</button>
+      <button class="answer-btn disagree" onclick="answer(-0.5)">Disagree</button>
+      <button class="answer-btn strongly-disagree" onclick="answer(-1.0)">Strongly Disagree</button>
+      <button class="back-btn" id="back-btn" onclick="goBack()" disabled>← Back</button>
+    </div>
+  </div>
+
+  <script src="questions.js"></script>
+  <script>
+    let currentQuestion = 0;
+    let scores = {
+      a1a: 0, a1b: 0, a1c: 0,
+      a2a: 0, a2b: 0, a2c: 0,
+      a3a: 0, a3b: 0, a3c: 0,
+      a4a: 0, a4b: 0, a4c: 0,
+      a5a: 0, a5b: 0, a5c: 0,
+      a6a: 0, a6b: 0, a6c: 0,
+      a7: 0,
+      a8a: 0, a8b: 0, a8c: 0
+    };
+    let maxScores = Object.assign({}, scores);
+    let historyStack = [];
+    const originalQuestions = [...questions];
+    let debug = false;
+
+    // Fisher-Yates shuffle
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+
+    function init() {
+      // calculate maxScores for all questions
+      for (let i = 0; i < questions.length; i++) {
+        let targets = questions[i].targets;
+        for (let key in targets) {
+          maxScores[key] += Math.abs(targets[key]);
         }
+      }
+      displayQuestion();
+    }
 
-        function init() {
-            // calculate maxScores for all questions
-            for (let i = 0; i < questions.length; i++) {
-                let targets = questions[i].targets;
-                for (let key in targets) {
-                    maxScores[key] += Math.abs(targets[key]);
-                }
-            }
-            displayQuestion();
+    function displayQuestion() {
+      document.getElementById('question-text').innerText = questions[currentQuestion].text;
+      document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} of ${questions.length}`;
+      let progressPct = (currentQuestion / questions.length) * 100;
+      document.getElementById('progress-fill').style.width = `${progressPct}%`;
+
+      // Trigger animation
+      let card = document.getElementById('question-card');
+      card.classList.remove('fade-in');
+      void card.offsetWidth; // trigger reflow
+      card.classList.add('fade-in');
+
+      document.getElementById('back-btn').disabled = historyStack.length === 0;
+    }
+
+    function answer(multiplier) {
+      let targets = questions[currentQuestion].targets;
+      let changes = {};
+      for (let key in targets) {
+        if (debug) {
+          document.getElementById("debug-info").innerHTML = key + " " + multiplier;
         }
+        troll(key, multiplier);
+        changes[key] = multiplier * targets[key];
+        scores[key] += changes[key];
+      }
 
-        function displayQuestion() {
-            document.getElementById('question-text').innerText = questions[currentQuestion].text;
-            document.getElementById('progress-text').innerText = `Question ${currentQuestion + 1} of ${questions.length}`;
-            let progressPct = (currentQuestion / questions.length) * 100;
-            document.getElementById('progress-fill').style.width = `${progressPct}%`;
-            
-            // Trigger animation
-            let card = document.getElementById('question-card');
-            card.classList.remove('fade-in');
-            void card.offsetWidth; // trigger reflow
-            card.classList.add('fade-in');
-            
-            document.getElementById('back-btn').disabled = historyStack.length === 0;
+      historyStack = [changes]; // Store only one previous answer as requested
+
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        displayQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function troll(key, multiplier) {
+      if (key == "a7" && multiplier == -1) {
+        alert("Reactionary 🤢🤢🤢");
+      } else if (key == "a8c" && multiplier == 1) {
+        alert("Class collaborationist 💩💩💩");
+      }
+    }
+
+    function setQuestion(newQuestion) {
+      currentQuestion = newQuestion - 1;
+      displayQuestion();
+    }
+
+    function setDebug() {
+      debug = true;
+      for (let i = 0; i < questions.length; i++) {
+        questions[i] = originalQuestions[i];
+      }
+      setQuestion(1);
+    }
+
+    function goBack() {
+      if (historyStack.length > 0) {
+        let changes = historyStack.pop();
+        for (let key in changes) {
+          scores[key] -= changes[key];
         }
+        currentQuestion--;
+        displayQuestion();
+      }
+    }
 
-        function answer(multiplier) {
-            let targets = questions[currentQuestion].targets;
-            let changes = {};
-            for (let key in targets) {
-                changes[key] = multiplier * targets[key];
-                scores[key] += changes[key];
-            }
-            
-            historyStack = [changes]; // Store only one previous answer as requested
+    function normalize(raw, max) {
+      return max > 0 ? (max + raw) / (2 * max) * 100 : 50;
+    }
 
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                displayQuestion();
-            } else {
-                finishQuiz();
-            }
+    function finishQuiz() {
+      let params = new URLSearchParams();
+
+      let axes = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a8'];
+      for (let i = 0; i < axes.length; i++) {
+        let axis = axes[i];
+        let na = normalize(scores[axis + 'a'], maxScores[axis + 'a']);
+        let nb = normalize(scores[axis + 'b'], maxScores[axis + 'b']);
+        let nc = normalize(scores[axis + 'c'], maxScores[axis + 'c']);
+        let total = na + nb + nc;
+        if (total === 0) {
+          na = nb = nc = 33.3;
+          total = 100;
         }
+        let pctA = (na / total * 100).toFixed(1);
+        let pctB = (nb / total * 100).toFixed(1);
+        let pctC = (100 - parseFloat(pctA) - parseFloat(pctB)).toFixed(1);
 
-        function goBack() {
-            if (historyStack.length > 0) {
-                let changes = historyStack.pop();
-                for (let key in changes) {
-                    scores[key] -= changes[key];
-                }
-                currentQuestion--;
-                displayQuestion();
-            }
-        }
+        params.append(axis + 'a', pctA);
+        params.append(axis + 'b', pctB);
+        params.append(axis + 'c', pctC);
+      }
 
-        function normalize(raw, max) {
-            return max > 0 ? (max + raw) / (2 * max) * 100 : 50;
-        }
+      let progressive = normalize(scores['a7'], maxScores['a7']).toFixed(1);
+      params.append('a7', progressive);
 
-        function finishQuiz() {
-            let params = new URLSearchParams();
-            
-            let axes = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a8'];
-            for (let i = 0; i < axes.length; i++) {
-                let axis = axes[i];
-                let na = normalize(scores[axis+'a'], maxScores[axis+'a']);
-                let nb = normalize(scores[axis+'b'], maxScores[axis+'b']);
-                let nc = normalize(scores[axis+'c'], maxScores[axis+'c']);
-                let total = na + nb + nc;
-                if (total === 0) {
-                    na = nb = nc = 33.3;
-                    total = 100;
-                }
-                let pctA = (na / total * 100).toFixed(1);
-                let pctB = (nb / total * 100).toFixed(1);
-                let pctC = (100 - parseFloat(pctA) - parseFloat(pctB)).toFixed(1);
-                
-                params.append(axis+'a', pctA);
-                params.append(axis+'b', pctB);
-                params.append(axis+'c', pctC);
-            }
-            
-            let progressive = normalize(scores['a7'], maxScores['a7']).toFixed(1);
-            params.append('a7', progressive);
-            
-            window.location.href = 'results.html?' + params.toString();
-        }
+      window.location.href = 'results.html?' + params.toString();
+    }
 
-        window.onload = init;
-    </script>
+    window.onload = init;
+  </script>
 </body>
+
 </html>
