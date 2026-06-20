@@ -54,6 +54,8 @@ Produces:
 ideology_space.svg
 ```
 
+![Ideology Space](ideology_space.svg)
+
 ### Answer Space
 
 ```bash
@@ -65,6 +67,8 @@ Produces:
 ```text
 answer_space.svg
 ```
+
+![Answer Space](answer_space.svg)
 
 ## Methodology
 
