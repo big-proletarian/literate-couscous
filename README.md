@@ -1,20 +1,19 @@
 # Triangular LeftValues
 
+## Running the Quiz
+Clone the repo and open `index.html`
+
+The quiz calculates your political profile and finds the closest matching ideologies.
+
 ## Requirements (for analysis tools)
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running the Quiz
-
-```bash
-python quiz.py
-```
-
-The quiz calculates your political profile and finds the closest matching ideologies.
-
 ## Analysis Tools
+
+All available ideologies can be found in `ideologies.js`
 
 ### Nearest Ideologies
 
@@ -27,7 +26,7 @@ Shows the ideologies closest to a given ideology in ideological space.
 ### Generate Answer Keys
 
 ```bash
-python analysis.py optimise "Left-Communism (ICT)"
+python analysis.py optimise "Marxism-Leninism"
 ```
 
 Generates answer sets that most closely produce the target ideology.
